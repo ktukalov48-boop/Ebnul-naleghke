@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Demonlist | Secure Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #08080a;
+            --surface-color: #12121a;
+            --surface-hover: #1a1a26;
+            --accent-color: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --admin-color: #f59e0b;
+            --text-main: #ffffff;
+            --text-muted: #8e8e9e;
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        header {
+            background-color: rgba(8, 8, 10, 0.8);
+            backdrop-filter: blur(15px);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: sticky; top: 0; z-index: 1000;
+        }
+
+        .logo { 
+            font-size: 22px; font-weight: 800; cursor: pointer; 
+            text-transform: uppercase; letter-spacing: 2px;
+            transition: var(--transition);
+        }
+        .logo:hover { color: var(--accent-color); text-shadow: 0 0 10px var(--accent-glow); }
+
+        .nav-btn { 
+            background: var(--accent-color); color: white; border: none; 
+            padding: 10px 24px; border-radius: 10px; font-weight: 700; 
+            cursor: pointer; transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+        .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--accent-glow); }
+
+        .user-badge { 
+            background: rgba(255, 255, 255, 0.05); padding: 8px 18px; 
+            border-radius: 10px; cursor: pointer; font-weight: 600; 
+            border: 1px solid rgba(255, 255, 255, 0.1); transition: var(--transition);
+        }
+        .user-badge:hover { border-color: var(--accent-color); background: rgba(59, 130, 246, 0.1); }
+
+        .container { max-width: 900px; margin: 40px auto; padding: 0 20px; animation: fadeIn 0.5s ease forwards; }
+        
+        .level-list { display: flex; flex-direction: column; gap: 15px; }
+        
+        .level-card {
+            background-color: var(--surface-color); border-radius: var(--border-radius);
+            padding: 20px; display: flex; align-items: center; gap: 20px; 
+            border: 1px solid rgba(255, 255, 255, 0.03); cursor: pointer;
+            transition: var(--transition);
+        }
+        .level-card:hover {
+            background-color: var(--surface-hover); transform: translateX(10px);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .level-img { 
+            width: 140px; height: 80px; background: #1c1c28; 
+            border-radius: 10px; flex-shrink: 0; background-size: cover; background-position: center;
+        }
+
+        .level-info { flex-grow: 1; }
+        .level-name { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px; }
+        .difficulty-face { width: 36px; height: 36px; object-fit: contain; }
+
+        .stats { display: flex; gap: 15px; margin-top: 8px; color: var(--text-muted); font-size: 13px; }
+
+        /* --- Level Page --- */
+        .video-container {
+            width: 100%; aspect-ratio: 16/9; background: #000;
+            border-radius: var(--border-radius); overflow: hidden;
+            margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .video-container iframe { width: 100%; height: 100%; border: none; }
+
+        .like-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            color: white; padding: 12px 25px; border-radius: 10px; cursor: pointer;
+            font-weight: 700; transition: var(--transition); display: flex; align-items: center; gap: 10px;
+        }
+        .like-btn.active { background: #ef4444; border-color: #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
+
+        .card {
+            background-color: var(--surface-color); padding: 40px; border-radius: 24px;
+            width: 100%; max-width: 500px; margin: 60px auto; position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .back-btn { 
+            position: absolute; top: 20px; left: 20px; font-size: 24px; 
+            cursor: pointer; color: var(--text-muted); transition: var(--transition);
+        }
+
+        .input-field, select {
+            width: 100%; padding: 15px; margin: 10px 0 20px;
+            background: var(--bg-color); border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px; color: white; outline: none;
+        }
+
+        .action-btn { 
+            width: 100%; padding: 15px; background: var(--accent-color); 
+            border: none; border-radius: 12px; color: white; font-weight: 700; cursor: pointer; transition: var(--transition);
+        }
+
+        .yt-fallback { text-align: center; margin-top: 10px; display: block; color: var(--accent-color); text-decoration: none; font-size: 14px; }
+
+        .hidden { display: none !important; }
+        .empty-msg { text-align: center; color: var(--text-muted); margin-top: 50px; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo" onclick="showPage('home')">Real Demonlist</div>
+        <div id="header-auth">
+            <button class="nav-btn" onclick="showPage('auth')">Вход</button>
+        </div>
+    </header>
+
+    <div id="page-home" class="container">
+        <h2 style="margin-bottom: 25px; font-size: 28px;">Топ уровней</h2>
+        <div class="level-list" id="levels-container">
+            <p class="empty-msg">Список уровней пока пуст. Администрация скоро добавит новые шедевры!</p>
+        </div>
+    </div>
+
+    <div id="page-level-detail" class="container hidden">
+        <div class="back-btn" onclick="showPage('home')" style="position: static; margin-bottom: 20px;">← Назад к списку</div>
+        <div class="video-container" id="video-frame"></div>
+        <a id="yt-link" class="yt-fallback" target="_blank">Смотреть на YouTube (если плеер не работает)</a>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin: 20px 0;">
+            <div>
+                <h1 id="det-name" style="font-size: 32px;">Название</h1>
+                <p id="det-author" style="color: var(--text-muted);">by Creator</p>
+            </div>
+            <div id="det-diff-box"></div>
+        </div>
+        <button class="like-btn" id="like-btn-action">❤ Поставить лайк (<span id="det-likes">0</span>)</button>
+    </div>
+
+    <div id="page-auth" class="container hidden">
+        <div class="card">
+            <div class="back-btn" onclick="showPage('home')">←</div>
+            <h2 id="auth-title" style="text-align: center; margin-bottom: 25px;">Авторизация</h2>
+            <input type="text" id="auth-user" class="input-field" placeholder="Никнейм">
+            <input type="password" id="auth-pass" class="input-field" placeholder="Пароль">
+            <button class="action-btn" id="auth-submit">Войти</button>
+            <p id="auth-toggle" style="text-align: center; margin-top: 20px; cursor: pointer; color: var(--text-muted);">Нет аккаунта? Регистрация</p>
+        </div>
+    </div>
+
+    <div id="page-profile" class="container hidden">
+        <div class="card" style="text-align: center;">
+            <div class="back-btn" onclick="showPage('home')">←</div>
+            <div style="width: 90px; height: 90px; background: linear-gradient(45deg, var(--accent-color), #a855f7); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 35px; font-weight: 800;" id="p-icon">?</div>
+            <h2 id="p-name">User</h2>
+            <div id="admin-section" class="hidden">
+                <button class="action-btn" style="background: var(--admin-color); margin-top: 20px;" onclick="showPage('admin')">Админ-Панель</button>
+            </div>
+            <button class="action-btn" style="background: #ef4444; margin-top: 15px;" onclick="logout()">Выйти</button>
+        </div>
+    </div>
+
+    <div id="page-admin" class="container hidden">
+        <div class="card" style="max-width: 600px;">
+            <div class="back-btn" onclick="showPage('profile')">←</div>
+            <h2 style="text-align: center; margin-bottom: 25px;">Новый уровень</h2>
+            <input type="text" id="lvl-name" class="input-field" placeholder="Название">
+            <input type="text" id="lvl-author" class="input-field" placeholder="Автор">
+            <input type="text" id="lvl-img" class="input-field" placeholder="Обложка (URL)">
+            <input type="text" id="lvl-video" class="input-field" placeholder="YouTube ссылка">
+            <select id="lvl-diff">
+                <option value="easy">Easy</option><option value="normal">Normal</option>
+                <option value="hard">Hard</option><option value="harder">Harder</option>
+                <option value="insane">Insane</option><option value="demon">Demon</option>
+                <option value="extreme-demon">Extreme Demon</option>
+            </select>
+            <button class="action-btn" style="background: var(--admin-color);" onclick="addNewLevel()">Опубликовать</button>
+        </div>
+    </div>
+
+    <script>
+        const diffIcons = {
+            "easy": "https://gdbrowser.com/assets/difficulties/easy.png",
+            "normal": "https://gdbrowser.com/assets/difficulties/normal.png",
+            "hard": "https://gdbrowser.com/assets/difficulties/hard.png",
+            "harder": "https://gdbrowser.com/assets/difficulties/harder.png",
+            "insane": "https://gdbrowser.com/assets/difficulties/insane.png",
+            "demon": "https://gdbrowser.com/assets/difficulties/demon-hard.png",
+            "extreme-demon": "https://gdbrowser.com/assets/difficulties/demon-extreme.png"
+        };
+
+        let levels = [
+    { name: "Хер-Кровь", author: "Писюн", img: "https://thumbnails.demonlist.org/classic/2290.png", video: "https://www.youtube.com/watch?v=twTw4fjT0ik", diff: "extreme-demon", likedBy: [] }
+];
+        let registeredUsers = [{user: "testacc", pass: "123"}]; 
+        let currentUser = null;
+        let isLoginMode = true;
+        let currentViewingId = null;
+
+        function showPage(pageId) {
+            document.querySelectorAll('.container').forEach(c => c.classList.add('hidden'));
+            document.getElementById('page-' + pageId).classList.remove('hidden');
+        }
+
+        function renderLevels() {
+            const container = document.getElementById('levels-container');
+            if(levels.length === 0) {
+                container.innerHTML = '<p class="empty-msg">Список уровней пока пуст. Администрация скоро добавит новые шедевры!</p>';
+                return;
+            }
+            container.innerHTML = '';
+            levels.forEach((l, index) => {
+                const imgStyle = l.img ? `style="background-image: url('${l.img}')"` : '';
+                container.innerHTML += `
+                    <div class="level-card" onclick="openLevelDetail(${index})">
+                        <div class="level-img" ${imgStyle}></div>
+                        <div class="level-info">
+                            <div class="level-name">${l.name} <img src="${diffIcons[l.diff]}" class="difficulty-face"></div>
+                            <div style="font-size: 13px; color: #8e8e9e;">by ${l.author}</div>
+                            <div class="stats">❤ ${l.likedBy.length} лайков</div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function openLevelDetail(id) {
+            currentViewingId = id;
+            const l = levels[id];
+            document.getElementById('det-name').innerText = l.name;
+            document.getElementById('det-author').innerText = 'by ' + l.author;
+            document.getElementById('det-likes').innerText = l.likedBy.length;
+            document.getElementById('det-diff-box').innerHTML = `<img src="${diffIcons[l.diff]}" style="width:60px">`;
+            
+            // Чистка ссылки видео
+            let videoUrl = l.video;
+            let embedUrl = "";
+            if(videoUrl.includes('v=')) embedUrl = "https://www.youtube.com/embed/" + videoUrl.split('v=')[1].split('&')[0];
+            else if(videoUrl.includes('youtu.be/')) embedUrl = "https://www.youtube.com/embed/" + videoUrl.split('be/')[1];
+
+            document.getElementById('video-frame').innerHTML = embedUrl ? 
+                `<iframe src="${embedUrl}?rel=0" allowfullscreen></iframe>` : 'Видео недоступно';
+            
+            document.getElementById('yt-link').href = videoUrl;
+
+            // Состояние кнопки лайка
+            const btn = document.getElementById('like-btn-action');
+            if(currentUser && l.likedBy.includes(currentUser)) btn.classList.add('active');
+            else btn.classList.remove('active');
+
+            showPage('level-detail');
+        }
+
+        document.getElementById('like-btn-action').onclick = function() {
+            if(!currentUser) return alert("Сначала войди в аккаунт!");
+            const l = levels[currentViewingId];
+            const index = l.likedBy.indexOf(currentUser);
+
+            if(index === -1) {
+                l.likedBy.push(currentUser);
+                this.classList.add('active');
+            } else {
+                l.likedBy.splice(index, 1);
+                this.classList.remove('active');
+            }
+            
+            document.getElementById('det-likes').innerText = l.likedBy.length;
+            renderLevels();
+        };
+
+        function addNewLevel() {
+            const name = document.getElementById('lvl-name').value;
+            const author = document.getElementById('lvl-author').value;
+            const img = document.getElementById('lvl-img').value;
+            const video = document.getElementById('lvl-video').value;
+            const diff = document.getElementById('lvl-diff').value;
+
+            if(!name || !author) return;
+
+            const newLvl = { name, author, img, video, diff, likedBy: [] };
+            levels.splice(Math.floor(Math.random() * (levels.length + 1)), 0, newLvl);
+
+            renderLevels();
+            showPage('home');
+        }
+
+        document.getElementById('auth-submit').onclick = () => {
+            const user = document.getElementById('auth-user').value;
+            const pass = document.getElementById('auth-pass').value;
+            if (isLoginMode) {
+                const found = registeredUsers.find(u => u.user === user && u.pass === pass);
+                if (found) {
+                    currentUser = user;
+                    document.getElementById('header-auth').innerHTML = `<div class="user-badge" onclick="openProfile()">${user}</div>`;
+                    showPage('home');
+                } else alert("Ошибка!");
+            } else {
+                registeredUsers.push({user, pass});
+                alert("Аккаунт создан!"); document.getElementById('auth-toggle').click();
+            }
+        };
+
+        document.getElementById('auth-toggle').onclick = () => {
+            isLoginMode = !isLoginMode;
+            document.getElementById('auth-title').innerText = isLoginMode ? "Авторизация" : "Регистрация";
+            document.getElementById('auth-submit').innerText = isLoginMode ? "Войти" : "Создать аккаунт";
+        };
+
+        function openProfile() {
+            document.getElementById('p-name').innerText = currentUser;
+            document.getElementById('p-icon').innerText = currentUser[0].toUpperCase();
+            if(currentUser === "testacc") document.getElementById('admin-section').classList.remove('hidden');
+            else document.getElementById('admin-section').classList.add('hidden');
+            showPage('profile');
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('header-auth').innerHTML = `<button class="nav-btn" onclick="showPage('auth')">Вход</button>`;
+            showPage('home');
+        }
+
+        renderLevels();
+    </script>
+</body>
+</html>
